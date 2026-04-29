@@ -1,5 +1,7 @@
 # AI Agent Engine for Codex
 
+[中文说明](README.zh-CN.md)
+
 This is the Codex-native V1 migration of AI Agent Engine. It is intentionally a skill-first plugin: it exposes AE's core engineering workflows as Codex skills and does not include the original platform-specific TypeScript plugin server, custom runtime tools, TUI integration, or command registry.
 
 ## Included Skills
