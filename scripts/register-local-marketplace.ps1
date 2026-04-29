@@ -26,6 +26,19 @@ function Write-JsonFile($path, $value) {
   [System.IO.File]::WriteAllText($path, $json, $utf8NoBom)
 }
 
+function Copy-PluginSnapshot($sourceRoot, $destinationRoot) {
+  if (Test-Path -LiteralPath $destinationRoot) {
+    Remove-Item -LiteralPath $destinationRoot -Recurse -Force
+  }
+  New-Item -ItemType Directory -Force -Path $destinationRoot | Out-Null
+
+  Get-ChildItem -Force -LiteralPath $sourceRoot |
+    Where-Object { $_.Name -notin @('.git', '.omx') } |
+    ForEach-Object {
+      Copy-Item -LiteralPath $_.FullName -Destination (Join-Path $destinationRoot $_.Name) -Recurse -Force
+    }
+}
+
 $pluginRootPath = (Resolve-Path -LiteralPath $PluginRoot).Path
 $manifestPath = Join-Path $pluginRootPath '.codex-plugin\plugin.json'
 if (-not (Test-Path -LiteralPath $manifestPath)) {
@@ -80,22 +93,12 @@ Write-JsonFile $MarketplacePath $marketplace
 
 $marketplacePluginPath = Join-Path $MarketplaceRoot "plugins\$($manifest.name)"
 Assert-ChildPath $marketplacePluginPath $MarketplaceRoot
-if (Test-Path -LiteralPath $marketplacePluginPath) {
-  Remove-Item -LiteralPath $marketplacePluginPath -Recurse -Force
-}
-Copy-Item -LiteralPath $pluginRootPath -Destination $marketplacePluginPath -Recurse -Force
-Remove-Item -LiteralPath (Join-Path $marketplacePluginPath '.git') -Recurse -Force -ErrorAction SilentlyContinue
-Remove-Item -LiteralPath (Join-Path $marketplacePluginPath '.omx') -Recurse -Force -ErrorAction SilentlyContinue
+Copy-PluginSnapshot $pluginRootPath $marketplacePluginPath
 
 $cachePluginPath = Join-Path $CacheRoot "ae-local\$($manifest.name)\$($manifest.version)"
 Assert-ChildPath $cachePluginPath $CacheRoot
-if (Test-Path -LiteralPath $cachePluginPath) {
-  Remove-Item -LiteralPath $cachePluginPath -Recurse -Force
-}
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $cachePluginPath) | Out-Null
-Copy-Item -LiteralPath $pluginRootPath -Destination $cachePluginPath -Recurse -Force
-Remove-Item -LiteralPath (Join-Path $cachePluginPath '.git') -Recurse -Force -ErrorAction SilentlyContinue
-Remove-Item -LiteralPath (Join-Path $cachePluginPath '.omx') -Recurse -Force -ErrorAction SilentlyContinue
+Copy-PluginSnapshot $pluginRootPath $cachePluginPath
 
 [ordered]@{
   status = 'registered'
