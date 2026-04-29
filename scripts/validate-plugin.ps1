@@ -14,7 +14,17 @@ $requiredSkills = @(
   'ae-help',
   'ae-gate',
   'ae-recovery',
-  'ae-review-contract'
+  'ae-review-contract',
+  'ae-swagger-parser',
+  'ae-prompt-optimize',
+  'ae-document-review',
+  'ae-save-rules',
+  'ae-handoff',
+  'ae-frontend-design',
+  'ae-test-browser',
+  'ae-sql',
+  'ae-figma-assets',
+  'ae-update'
 )
 
 $expectedSkillNames = @{
@@ -29,6 +39,16 @@ $expectedSkillNames = @{
   'ae-gate' = 'ae:gate'
   'ae-recovery' = 'ae:recovery'
   'ae-review-contract' = 'ae:review-contract'
+  'ae-swagger-parser' = 'ae:swagger-parser'
+  'ae-prompt-optimize' = 'ae:prompt-optimize'
+  'ae-document-review' = 'ae:document-review'
+  'ae-save-rules' = 'ae:save-rules'
+  'ae-handoff' = 'ae:handoff'
+  'ae-frontend-design' = 'ae:frontend-design'
+  'ae-test-browser' = 'ae:test-browser'
+  'ae-sql' = 'ae:sql'
+  'ae-figma-assets' = 'ae:figma-assets'
+  'ae-update' = 'ae:update'
 }
 
 $triggerSamples = @{
@@ -43,6 +63,16 @@ $triggerSamples = @{
   'ae-gate' = @('/ae-gate', 'ae:gate')
   'ae-recovery' = @('/ae-recovery', 'ae:recovery')
   'ae-review-contract' = @('/ae-review-contract', 'ae:review-contract')
+  'ae-swagger-parser' = @('/ae-swagger-parser', 'ae:swagger-parser')
+  'ae-prompt-optimize' = @('/ae-prompt-optimize', 'ae:prompt-optimize')
+  'ae-document-review' = @('/ae-document-review', 'ae:document-review')
+  'ae-save-rules' = @('/ae-save-rules', 'ae:save-rules')
+  'ae-handoff' = @('/ae-handoff', 'ae:handoff')
+  'ae-frontend-design' = @('/ae-frontend-design', 'ae:frontend-design')
+  'ae-test-browser' = @('/ae-test-browser', 'ae:test-browser')
+  'ae-sql' = @('/ae-sql', 'ae:sql')
+  'ae-figma-assets' = @('/ae-figma-assets', 'ae:figma-assets')
+  'ae-update' = @('/ae-update', 'ae:update')
 }
 
 $routingCases = @(
@@ -53,7 +83,17 @@ $routingCases = @(
   @{ Prompt = '/ae-task-loop fix type errors until green'; Skill = 'ae-task-loop' },
   @{ Prompt = '/ae-gate final proof'; Skill = 'ae-gate' },
   @{ Prompt = '/ae-recovery resume AE workflow'; Skill = 'ae-recovery' },
-  @{ Prompt = '/ae-review-contract choose reviewers'; Skill = 'ae-review-contract' }
+  @{ Prompt = '/ae-review-contract choose reviewers'; Skill = 'ae-review-contract' },
+  @{ Prompt = '/ae-swagger-parser summarize OpenAPI'; Skill = 'ae-swagger-parser' },
+  @{ Prompt = '/ae-prompt-optimize improve this prompt'; Skill = 'ae-prompt-optimize' },
+  @{ Prompt = '/ae-document-review review this plan'; Skill = 'ae-document-review' },
+  @{ Prompt = '/ae-save-rules remember this rule'; Skill = 'ae-save-rules' },
+  @{ Prompt = '/ae-handoff create a continuation summary'; Skill = 'ae-handoff' },
+  @{ Prompt = '/ae-frontend-design improve this UI'; Skill = 'ae-frontend-design' },
+  @{ Prompt = '/ae-test-browser validate this page'; Skill = 'ae-test-browser' },
+  @{ Prompt = '/ae-sql inspect this database'; Skill = 'ae-sql' },
+  @{ Prompt = '/ae-figma-assets collect design files'; Skill = 'ae-figma-assets' },
+  @{ Prompt = '/ae-update refresh plugin'; Skill = 'ae-update' }
 )
 
 $results = New-Object System.Collections.Generic.List[string]
@@ -104,7 +144,10 @@ foreach ($capability in @('Interactive', 'Read', 'Write')) {
     Fail "Missing interface capability: $capability"
   }
 }
-Pass 'plugin manifest is parseable and declares the expected Codex 0.2 surface'
+if ($manifest.version -ne '0.3.0') {
+  Fail "Unexpected plugin version: $($manifest.version)"
+}
+Pass 'plugin manifest is parseable and declares the expected Codex 0.3 surface'
 
 if (-not (Test-Path -LiteralPath $skillsRoot)) {
   Fail "Missing skills directory: $skillsRoot"
@@ -191,13 +234,48 @@ foreach ($file in $scanFiles) {
 }
 Pass 'compatibility scan found no blocked opencode-only tool or plugin leftovers'
 
-foreach ($script in @('ae-gate.ps1', 'ae-recovery.ps1', 'ae-review-contract.ps1', 'test-core-tools.ps1')) {
+foreach ($script in @(
+  'ae-gate.ps1',
+  'ae-recovery.ps1',
+  'ae-review-contract.ps1',
+  'ae-swagger-parser.ps1',
+  'ae-prompt-optimize.ps1',
+  'ae-help-catalog.ps1',
+  'ae-save-rules.ps1',
+  'ae-handoff.ps1',
+  'ae-reviewer-catalog.ps1',
+  'ae-sql.ps1',
+  'ae-figma-assets.ps1',
+  'ae-update.ps1',
+  'register-local-marketplace.ps1',
+  'unregister-local-marketplace.ps1',
+  'test-core-tools.ps1',
+  'test-migration-surface.ps1'
+)) {
   $scriptPath = Join-Path $root "scripts\$script"
   if (-not (Test-Path -LiteralPath $scriptPath)) {
     Fail "Missing core script: $scriptPath"
   }
 }
-Pass 'core gate, recovery, and review-contract scripts are present'
+Pass 'migrated scripts and test suites are present'
+
+foreach ($fixture in @(
+  'tests\fixtures\swagger\openapi-3-basic.json',
+  'tests\fixtures\swagger\swagger-2-basic.json',
+  'tests\fixtures\swagger\golden\openapi-3-overview.md',
+  'tests\fixtures\swagger\golden\swagger-2-detail.md',
+  '.github\workflows\validate.yml'
+)) {
+  $fixturePath = Join-Path $root $fixture
+  if (-not (Test-Path -LiteralPath $fixturePath)) {
+    Fail "Missing expected migration asset: $fixturePath"
+  }
+}
+$reviewerCount = @(Get-ChildItem -File -LiteralPath (Join-Path $root 'references\reviewers') -Filter '*.md').Count
+if ($reviewerCount -ne 26) {
+  Fail "Expected 26 reviewer references, got $reviewerCount"
+}
+Pass 'fixtures, workflow, and reviewer references are present'
 
 $readmePath = Join-Path $root 'README.md'
 if (-not (Test-Path -LiteralPath $readmePath)) {
@@ -206,8 +284,8 @@ if (-not (Test-Path -LiteralPath $readmePath)) {
 $readme = Get-Content -Raw -LiteralPath $readmePath
 foreach ($needle in @(
   'skill-first plugin',
-  'V2 Core Closure',
-  'V2 Boundaries',
+  '0.3 Migration Surface',
+  'V3 Boundaries',
   'does not update global Codex marketplace configuration automatically',
   'Swagger parsing',
   'Figma export',

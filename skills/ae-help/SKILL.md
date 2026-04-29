@@ -5,7 +5,15 @@ description: "List AI Agent Engine for Codex V1 skills and usage guidance. Trigg
 
 # AE Help for Codex
 
-Use this skill to explain the V1 Codex skill pack. Do not scan the source repository unless the user asks for implementation details; the stable V1 surface is listed below.
+Use this skill to explain the Codex skill pack. Prefer the dynamic help catalog script so the output stays aligned with installed skills.
+
+Run:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File <plugin-root>\scripts\ae-help-catalog.ps1
+```
+
+Fallback static surface:
 
 ## Skills
 
