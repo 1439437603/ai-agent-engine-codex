@@ -1,6 +1,6 @@
 ---
 name: ae:help
-description: "List AI Agent Engine for Codex V1 skills and usage guidance. Trigger on ae:help, /ae-help, AE help, available AE commands, or plugin capabilities."
+description: "List AI Agent Engine for Codex skills, current capabilities, planned optimizations, and planned development. Trigger on ae:help, /ae-help, AE help, available AE commands, or plugin capabilities."
 ---
 
 # AE Help for Codex
@@ -31,11 +31,11 @@ Fallback static surface:
 | `ae:recovery` | `/ae-recovery` | Recover workflow state from existing artifacts |
 | `ae:review-contract` | `/ae-review-contract` | Generate reviewer selection and gate rules |
 
-## V1 Boundaries
+## Current Boundaries
 
-- V1 provides Codex skills only, not native slash commands.
+- The current project provides Codex skills only; native command registration is planned development.
 - Core gate, recovery, and review-contract checks are available as script-backed Codex skills.
-- Specialized tools for Swagger, Figma, SQL, browser automation, dynamic catalogs, and cross-session transfer are not included yet.
+- Specialized tools for Figma export, SQL execution, browser automation, dynamic ranking, and cross-session transfer are planned development or planned optimization.
 - When a workflow needs proof, use Codex-visible evidence: file checks, git status, lint/typecheck/test output, screenshots when available, and final evidence summaries.
 
 ## Recommended Use

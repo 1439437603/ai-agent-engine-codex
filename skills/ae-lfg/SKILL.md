@@ -5,7 +5,7 @@ description: "Default AI Agent Engine entry for Codex: drive a request from requ
 
 # AE LFG for Codex
 
-Use this as the main pipeline for feature work, bug fixes, migrations, or multi-step engineering tasks.
+Use this as the main pipeline for feature work, bug fixes, product experiments, or multi-step engineering tasks.
 
 ## Pipeline
 
@@ -55,6 +55,6 @@ Before claiming completion, confirm:
 - No known blocking findings remain.
 - Remaining risks are explicit.
 
-## V1 Adaptation Notes
+## Runtime Notes
 
-This Codex version uses native file inspection, shell verification, git status, and review output instead of platform-specific runtime tools.
+This Codex project uses native file inspection, shell verification, git status, and review output as the default proof surface.

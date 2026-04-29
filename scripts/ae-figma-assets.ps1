@@ -17,5 +17,5 @@ New-Item -ItemType Directory -Force -Path $OutputPath | Out-Null
   sourcePath = (Resolve-Path -LiteralPath $SourcePath).Path
   outputPath = (Resolve-Path -LiteralPath $OutputPath).Path
   apiExportEnabled = $false
-  note = 'V3 placeholder: only authorized local asset collection is enabled; Figma API export requires explicit token design.'
+  note = 'Planned development: only authorized local asset collection is enabled; Figma API export requires explicit token design.'
 } | ConvertTo-Json -Depth 5

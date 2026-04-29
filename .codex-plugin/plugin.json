@@ -1,14 +1,14 @@
 {
   "name": "ai-agent-engine-codex",
   "version": "0.3.0",
-  "description": "Codex-native AI Agent Engine skills and scripts for requirements, planning, execution, review, recovery, gates, Swagger parsing, safe wrappers, and verification workflows.",
+  "description": "Original Codex-native AI Agent Engine skills and scripts for requirements, planning, execution, review, recovery, gates, Swagger parsing, safe wrappers, and verification workflows.",
   "author": {
     "name": "AI Agent Engine",
     "email": "noreply@example.com",
-    "url": "https://gitee.com/jiangqiang1996/ai-agent-engine"
+    "url": "https://github.com/1439437603/ai-agent-engine-codex"
   },
-  "homepage": "https://gitee.com/jiangqiang1996/ai-agent-engine",
-  "repository": "https://gitee.com/jiangqiang1996/ai-agent-engine",
+  "homepage": "https://github.com/1439437603/ai-agent-engine-codex",
+  "repository": "https://github.com/1439437603/ai-agent-engine-codex",
   "license": "Apache-2.0",
   "keywords": [
     "ai-agent-engine",
@@ -21,8 +21,8 @@
   "skills": "./skills/",
   "interface": {
     "displayName": "AI Agent Engine for Codex",
-    "shortDescription": "AE engineering workflow skills adapted for Codex",
-    "longDescription": "A Codex-native skill pack that adapts AI Agent Engine's engineering workflow: brainstorm requirements, create plans, execute work, review changes, recover artifacts, run evidence gates, parse Swagger/OpenAPI fixtures, generate handoffs, and verify delivery.",
+    "shortDescription": "Original AE engineering workflow skills for Codex",
+    "longDescription": "A Codex-native skill pack for a new AI Agent Engine workflow: brainstorm requirements, create plans, execute work, review changes, recover artifacts, run evidence gates, parse Swagger/OpenAPI fixtures, generate handoffs, and verify delivery.",
     "developerName": "AI Agent Engine",
     "category": "Coding",
     "capabilities": [

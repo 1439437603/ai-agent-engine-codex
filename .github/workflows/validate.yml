@@ -15,6 +15,6 @@ jobs:
       - name: Test core tools
         shell: pwsh
         run: powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\test-core-tools.ps1
-      - name: Test migration surface
+      - name: Test roadmap surface
         shell: pwsh
-        run: powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\test-migration-surface.ps1
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\test-roadmap-surface.ps1

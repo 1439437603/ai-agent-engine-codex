@@ -1,6 +1,6 @@
 ---
 name: ae:plan
-description: "Create a decision-complete implementation plan for Codex. Trigger on ae:plan, /ae-plan, plan this, implementation plan, migration plan, or turning requirements into executable steps."
+description: "Create a decision-complete implementation plan for Codex. Trigger on ae:plan, /ae-plan, plan this, implementation plan, roadmap plan, or turning requirements into executable steps."
 ---
 
 # AE Plan
@@ -20,7 +20,7 @@ Accept any of:
 
 1. Read relevant repository files and instructions before planning.
 2. Define the target outcome and completion criteria.
-3. Identify runtime, protocol, state, tool, safety, and compatibility risks.
+3. Identify runtime, protocol, state, tool, safety, and integration risks.
 4. Choose the smallest implementation that satisfies the goal.
 5. Specify public interfaces, file locations, data flow, and failure handling only where needed to prevent ambiguity.
 6. Define verification commands and expected evidence.

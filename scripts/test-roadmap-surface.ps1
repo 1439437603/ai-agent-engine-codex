@@ -46,7 +46,7 @@ function Normalize-Text($text) {
   return ($text -replace "`r`n", "`n").Trim()
 }
 
-$workspace = Join-Path ([System.IO.Path]::GetTempPath()) ("ae-codex-migration-" + [guid]::NewGuid().ToString('N'))
+$workspace = Join-Path ([System.IO.Path]::GetTempPath()) ("ae-codex-roadmap-" + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Force -Path $workspace | Out-Null
 
 $marketplaceRoot = Join-Path $workspace 'marketplace-root'
@@ -106,7 +106,7 @@ $help = Run-TextScript 'ae-help-catalog.ps1' @('-Root', $root)
 foreach ($needle in @('ae:swagger-parser', 'ae:prompt-optimize', 'ae:document-review', 'ae:update', 'ae:figma-assets')) {
   if ($help -notlike "*$needle*") { Fail "Dynamic help missing $needle" }
 }
-Pass 'dynamic help catalog includes migrated skills'
+Pass 'dynamic help catalog includes current skills'
 
 $prompt = Run-JsonScript 'ae-prompt-optimize.ps1' @('-Prompt', '帮我做一个登录页', '-Auto')
 if (-not $prompt.optimizedPrompt -or $prompt.mode -ne 'auto') { Fail 'Prompt optimizer did not return optimized auto prompt.' }
@@ -115,7 +115,7 @@ Pass 'prompt optimizer returns structured optimized prompt'
 $handoff = Run-JsonScript 'ae-handoff.ps1' @(
   '-Root', $workspace,
   '-Title', 'demo handoff',
-  '-Goal', 'continue migration',
+  '-Goal', 'continue product innovation',
   '-Status', 'running',
   '-Evidence', 'tests pass',
   '-NextStep', 'continue'
@@ -155,14 +155,14 @@ foreach ($skill in @(
 )) {
   Assert-File (Join-Path $skillsRoot "$skill\SKILL.md")
 }
-Pass 'remaining migrated skill surfaces exist'
+Pass 'planned development skill surfaces exist'
 
 Assert-File (Join-Path $root '.github\workflows\validate.yml')
 Pass 'GitHub Actions validation workflow exists'
 
-Write-Output 'AI Agent Engine Codex migration surface tests'
+Write-Output 'AI Agent Engine Codex roadmap surface tests'
 Write-Output "Fixture workspace: $workspace"
 foreach ($result in $results) {
   Write-Output $result
 }
-Write-Output "PASS: migration surface tests completed with $($results.Count) check groups."
+Write-Output "PASS: roadmap surface tests completed with $($results.Count) check groups."

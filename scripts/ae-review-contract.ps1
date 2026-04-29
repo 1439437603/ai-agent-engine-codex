@@ -13,7 +13,7 @@ param(
   [switch]$HasPerformance,
   [switch]$HasApi,
   [switch]$HasReliability,
-  [switch]$HasMigrations,
+  [switch]$HasDataEvolution,
   [switch]$HasConfig,
   [switch]$HasInfra,
   [switch]$HasDatabase,
@@ -50,7 +50,7 @@ if ($HasSecurity -or $IsHighRiskDomain) { Add-Unique $reviewers 'security-review
 if ($HasApi) { Add-Unique $reviewers 'api-contract-reviewer' }
 if ($HasPerformance) { Add-Unique $reviewers 'performance-reviewer' }
 if ($HasReliability -or $HasInfra) { Add-Unique $reviewers 'reliability-reviewer' }
-if ($HasMigrations -or $HasDatabase) { Add-Unique $reviewers 'data-migrations-reviewer' }
+if ($HasDataEvolution -or $HasDatabase) { Add-Unique $reviewers 'data-evolution-reviewer' }
 if ($HasTooling -or $HasAgentConfig -or $HasCli) { Add-Unique $reviewers 'agent-native-reviewer' }
 if ($HasUi) { Add-Unique $reviewers 'design-lens-reviewer' }
 if ($HasArchitectureDecision -or $HasNewAbstraction -or $ChangedLines -ge 200) { Add-Unique $reviewers 'architecture-strategist' }

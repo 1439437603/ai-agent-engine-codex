@@ -81,7 +81,7 @@ description: "对仓库结构、文档、约定和实现模式进行全面研究
 
 **跳过规则（在 glob 之前应用）：**
 - **API 表面：** 如果 0.1 未发现 Web 框架或服务器依赖，且根列表未显示 API 相关目录或文件（`routes/`、`api/`、`proto/`、`*.proto`、`openapi.yaml`、`swagger.json`）：跳过 API 表面类别。报告"未检测到"。注意：某些语言（Go、Node）使用标准库服务器而无可见的框架依赖——在跳过之前检查根列表中的结构性信号。
-- **数据层：** 独立于 API 表面评估——CLI 或 worker 可以在没有 HTTP 层的情况下拥有数据库。仅在 0.1 未发现数据库相关依赖（如 prisma、typeorm、knex）且根列表未显示数据相关目录（`db/`、`prisma/`、`migrations/`、`models/`）时跳过。否则，检查下方数据层表。
+- **数据层：** 独立于 API 表面评估——CLI 或 worker 可以在没有 HTTP 层的情况下拥有数据库。仅在 0.1 未发现数据库相关依赖（如 prisma、typeorm、knex）且根列表未显示数据相关目录（`db/`、`prisma/`、`schema/`、`models/`）时跳过。否则，检查下方数据层表。
 - 如果 0.1 在根列表中未发现 Dockerfile、docker-compose 或基础设施目录（且未范围化 monorepo 服务）：跳过编排和 IaC 检查。仅在根列表中出现平台部署文件时才检查。范围化 monorepo 服务时，还检查该服务子树中的基础设施文件。
 - 如果根列表已显示部署文件（如 `fly.toml`、`vercel.json`）：直接读取而非 glob。
 
@@ -106,11 +106,11 @@ API 表面（如果 0.1 中没有 Web 框架或服务器依赖则跳过）：
 | `openapi.yaml`、`swagger.json` | REST API 规范 |
 | 路由/控制器目录（`routes/`、`app/controllers/`、`src/routes/`、`src/api/`） | HTTP 路由模式 |
 
-数据层（如果 0.1 中没有数据库库、ORM 或迁移工具则跳过）：
+数据层（如果 0.1 中没有数据库库、ORM 或 schema 工具则跳过）：
 
 | 文件/模式 | 揭示的内容 |
 |----------|-----------|
-| 迁移目录（`migrations/`、`prisma/`） | 数据库结构 |
+| Schema 目录（`schema/`、`prisma/`） | 数据库结构 |
 | ORM 模型目录（`src/models/`、`models/`） | 数据模型模式 |
 | Schema 文件（`prisma/schema.prisma`、`schema.sql`） | 数据模型定义 |
 | 队列/事件配置（Redis、Kafka、SQS 引用） | 异步模式 |

@@ -5,7 +5,7 @@ description: "Review code, documents, plans, or current git changes in Codex. Tr
 
 # AE Review
 
-Use this skill for findings-first review. Prioritize correctness, regressions, missing tests, security, data loss, compatibility, and maintainability risks.
+Use this skill for findings-first review. Prioritize correctness, regressions, missing tests, security, data loss, integration contracts, and maintainability risks.
 
 ## Scope Selection
 
@@ -21,8 +21,8 @@ If no reviewable artifact exists, explain the missing scope and suggest the smal
 
 1. Read relevant instructions and the target artifact.
 2. Understand intended behavior before judging implementation.
-3. Use `ae:review-contract` when the review scope has security, API, performance, migration, tooling, UI, or architecture risk.
-4. Check edge cases, failure modes, tests, compatibility, and user-visible behavior.
+3. Use `ae:review-contract` when the review scope has security, API, performance, data evolution, tooling, UI, or architecture risk.
+4. Check edge cases, failure modes, tests, integration contracts, and user-visible behavior.
 5. Report findings first, ordered by severity.
 6. Include precise file and line references when reviewing code.
 7. If no findings are discovered, say so and list residual risks or untested areas.

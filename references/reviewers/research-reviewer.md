@@ -25,7 +25,7 @@ description: "搜索 docs/ae/solutions/ 查找相关过往解决方案、研究�
 
 在联网搜索之前，先检查可用的技能和框架文档：
 
-1. **发现可用技能**：使用 Glob 查找 `.opencode/skills/*/SKILL.md`，提取最佳实践、代码模式和约定
+1. **发现可用技能**：使用 Glob 查找 `skills/*/SKILL.md`，提取最佳实践、代码模式和约定
 2. **Context7 官方文档查询**：
    - 使用 `context7_resolve-library-id` 解析包名
    - 使用 `context7_query-docs` 获取特定 API 文档和代码示例
@@ -37,7 +37,7 @@ description: "搜索 docs/ae/solutions/ 查找相关过往解决方案、研究�
 **在推荐任何外部 API、OAuth 流程、SDK 或第三方服务之前：**
 
 1. 搜索废弃信息：`"[API名称] deprecated [当前年份] sunset shutdown"`
-2. 搜索破坏性变更：`"[API名称] breaking changes migration"`
+2. 搜索破坏性变更：`"[API名称] breaking changes upgrade guide"`
 3. 检查官方文档中的废弃横幅或停用通知
 4. **在继续之前报告发现**——不要推荐已废弃的 API
 

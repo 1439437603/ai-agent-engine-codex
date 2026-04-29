@@ -1,14 +1,14 @@
 # AI Agent Engine for Codex 中文说明
 
-这是 AI Agent Engine 的 Codex 原生迁移版本。它采用“技能包优先”的方式，把 AE 的核心工程工作流迁移为 Codex 可发现、可触发、可执行的 skills，并补充脚本化门禁、恢复和审查契约能力。
+AI Agent Engine for Codex 是一个全新的 Codex 原生工程操作系统。它以 skill-first 插件和本地安全脚本为核心，把产品意图转成需求澄清、可执行计划、验证驱动执行、审查契约、恢复建议和交付证据。
 
-V1 的目标不是完整复刻 opencode 插件运行时，而是先提供稳定、可维护、可验证的 Codex 工作流能力。
+本项目定位为 Codex 上的创新项目，不再描述为任何现有运行时的转换版本。尚未实现的内容统一归类为待优化能力或待开发能力。
 
-## 这个仓库解决什么问题
+## 这个项目解决什么问题
 
-原始 `ai-agent-engine` 面向 opencode，依赖 opencode 的插件服务器、自定义工具、TUI、命令注册和运行时配置。Codex 插件的可移植形态更适合通过 `.codex-plugin/plugin.json` 声明插件，并通过 `skills/` 提供可组合工作流。
+Codex 可以完成大量工程任务，但复杂工作常常缺少稳定的流程骨架：什么时候澄清需求、什么时候写计划、什么时候进入执行、如何审查、失败后如何恢复、完成时拿什么证据交付。
 
-因此，本仓库将 AE 的核心工程方法迁移为 Codex 技能包，让 Codex 可以围绕需求澄清、计划、执行、审查、重构和验证形成稳定流程。
+本项目用一组可组合 skills 和脚本化检查，把这些工程动作固化为可复用流程，让 Codex 在需求、计划、执行、审查、重构、恢复和验证之间形成清晰闭环。
 
 ## 已包含的技能
 
@@ -36,7 +36,7 @@ V1 的目标不是完整复刻 opencode 插件运行时，而是先提供稳定�
 | `ae:figma-assets` | `/ae-figma-assets` | 已授权本地 Figma 资产整理 |
 | `ae:update` | `/ae-update` | 更新并验证插件仓库 |
 
-说明：`/ae-*` 在 V1 中是触发文本，不是 Codex 原生命令。
+说明：`/ae-*` 当前是触发文本；原生命令注册属于待开发能力。
 
 ## 目录结构
 
@@ -51,6 +51,7 @@ ai-agent-engine-codex/
     ae-recovery.ps1
     ae-review-contract.ps1
     test-core-tools.ps1
+    test-roadmap-surface.ps1
     validate-plugin.ps1
   skills/
     ae-brainstorm/
@@ -79,18 +80,18 @@ powershell -ExecutionPolicy Bypass -File .\scripts\validate-plugin.ps1
 校验脚本会检查：
 
 - 插件 manifest 是否可解析。
-- 插件名、skills 路径和能力声明是否符合 V1 约定。
-- 8 个核心技能是否都存在。
+- 插件名、skills 路径和能力声明是否符合当前项目约定。
+- 核心技能文件是否完整存在。
 - 每个技能是否包含正确的 `name`、`description`、`ae:*` 和 `/ae-*` 触发别名。
-- 5 个代表性触发用例是否能覆盖到对应 skill。
-- 是否残留 opencode-only 的强依赖。
-- README 是否说明激活边界和后续延期能力。
+- 代表性触发用例是否能覆盖到对应 skill。
+- 是否残留旧定位、旧平台或转换叙事。
+- README 是否说明当前能力、待优化能力和待开发能力。
 
 核心闭环脚本可单独验证：
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\test-core-tools.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\test-migration-surface.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\test-roadmap-surface.ps1
 ```
 
 ## 本机登记与回滚
@@ -109,38 +110,26 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\register-local-mar
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\unregister-local-marketplace.ps1
 ```
 
-## 已迁移的核心工具替代能力
+## 当前创新能力
 
 - `ae-gate.ps1`：返回 pass/block 门禁结果，final 阶段可写入 `docs/ae/gates/` 证明文件。
 - `ae-recovery.ps1`：扫描 `docs/ae/brainstorms/`、`docs/ae/plans/` 和 `docs/ae/gates/`，推荐下一步 skill。
 - `ae-review-contract.ps1`：根据审查类型和风险开关返回审查角色和门控规则。
+- `ae-swagger-parser.ps1`：解析本地 Swagger/OpenAPI JSON，并用 golden fixtures 固定输出。
+- `register-local-marketplace.ps1` / `unregister-local-marketplace.ps1`：提供本机 marketplace 登记、插件快照和 cache 清理。
+- SQL、Figma、browser 和 frontend 能力采用安全边界，凭证化执行先进入待开发队列。
 
-## 0.3 已迁移能力
+## 待优化能力
 
-- 本机 marketplace 登记和回滚脚本。
-- Swagger/OpenAPI 本地 JSON 解析和 golden fixtures 测试。
-- 动态 help catalog。
-- prompt optimize、document review、save-rules、handoff。
-- 26 个 reviewer reference 和 reviewer catalog。
-- frontend/browser/SQL/Figma/update 的 Codex 安全边界。
-- GitHub Actions 验证工作流。
+- 动态 help 根据用户意图排序，优先展示最相关的 AE skill。
+- recovery 根据 git 状态、handoff、proof 文件和失败检查做更精确的下一步建议。
+- review contract 增加严重级别校准、审查角色选择理由和剩余风险提示。
+- CI 增加 Windows PowerShell、PowerShell Core 和 hosted runner 的一致性检查。
 
-## V3 边界
+## 待开发能力
 
-本版本暂不迁移以下能力：
-
-- opencode TypeScript plugin server
-- opencode TUI
-- 原生 `/ae-*` 命令注册系统
-- 真实 Figma API 导出
-- 真实 SQL 执行
-- 自动浏览器 E2E
-- Codex 运行时热加载验证
-
-这些能力更适合作为 V2，通过 MCP、脚本或 Codex 插件扩展机制重新设计。
-
-## 推荐下一步
-
-1. 新开 Codex 会话测试 `/ae-help`、`/ae-plan`、`/ae-review`、`/ae-lfg`。
-2. 根据真实触发效果，决定是否继续迁移 MCP、真实 Figma/SQL/browser 执行，或保持当前安全 wrapper 边界。
-3. 若要推进 V2，先为凭证、权限、取消和审计日志定义独立验证标准。
+- 安全的 `/ae-*` 原生命令注册。
+- 带凭证边界、审计日志和可回滚写入的 Figma 导出。
+- 只读 SQL 巡检画像，以及经过 allowlist 确认后的受控执行。
+- 浏览器验收自动化：截图、console 捕获、取消处理和产物摘要。
+- 面向 Codex 会话的项目记忆层，用于长期规则、handoff 和交付证据复用。

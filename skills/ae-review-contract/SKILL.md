@@ -24,7 +24,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File <plugin-root>\scripts\ae-rev
 
 - Returns JSON with `kind`, `documentType`, `mode`, `reviewers`, `gate`, and `rules`.
 - Always includes baseline reviewers.
-- Adds specialist reviewers for security, API, reliability, performance, migration, tooling, UI, architecture, and product risks.
+- Adds specialist reviewers for security, API, reliability, performance, data evolution, tooling, UI, architecture, and product risks.
 
 ## Use In Workflows
 

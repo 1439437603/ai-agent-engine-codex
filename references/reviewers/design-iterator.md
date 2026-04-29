@@ -76,7 +76,7 @@ agent-browser --headed open [url]
 6. [分析并实现变更]
 7. agent-browser snapshot -i --json  # 变更或刷新后重新检测登录状态
 8. [如需要登录，执行登录等待流程]
-9. agent-browser screenshot output-v2.png
+9. agent-browser screenshot output-next.png
 10. [重复...]
 ```
 
