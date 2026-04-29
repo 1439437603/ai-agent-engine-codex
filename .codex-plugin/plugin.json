@@ -1,0 +1,41 @@
+{
+  "name": "ai-agent-engine-codex",
+  "version": "0.1.0",
+  "description": "Codex-native AI Agent Engine skills for requirements, planning, execution, review, and verification workflows.",
+  "author": {
+    "name": "AI Agent Engine",
+    "email": "noreply@example.com",
+    "url": "https://gitee.com/jiangqiang1996/ai-agent-engine"
+  },
+  "homepage": "https://gitee.com/jiangqiang1996/ai-agent-engine",
+  "repository": "https://gitee.com/jiangqiang1996/ai-agent-engine",
+  "license": "Apache-2.0",
+  "keywords": [
+    "ai-agent-engine",
+    "codex",
+    "skills",
+    "planning",
+    "review",
+    "verification"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "AI Agent Engine for Codex",
+    "shortDescription": "AE engineering workflow skills adapted for Codex",
+    "longDescription": "A Codex-native V1 skill pack that adapts AI Agent Engine's core engineering workflow: brainstorm requirements, create plans, execute work, review changes, and verify evidence before delivery.",
+    "developerName": "AI Agent Engine",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "/ae-lfg build this feature",
+      "/ae-plan turn this into a plan",
+      "/ae-review review my changes"
+    ],
+    "brandColor": "#2563EB",
+    "screenshots": []
+  }
+}
