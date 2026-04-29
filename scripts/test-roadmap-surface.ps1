@@ -108,7 +108,7 @@ foreach ($needle in @('ae:swagger-parser', 'ae:prompt-optimize', 'ae:document-re
 }
 Pass 'dynamic help catalog includes current skills'
 
-$prompt = Run-JsonScript 'ae-prompt-optimize.ps1' @('-Prompt', '帮我做一个登录页', '-Auto')
+$prompt = Run-JsonScript 'ae-prompt-optimize.ps1' @('-Prompt', 'Help me design a login page', '-Auto')
 if (-not $prompt.optimizedPrompt -or $prompt.mode -ne 'auto') { Fail 'Prompt optimizer did not return optimized auto prompt.' }
 Pass 'prompt optimizer returns structured optimized prompt'
 
