@@ -11,7 +11,10 @@ $requiredSkills = @(
   'ae-review',
   'ae-refactor',
   'ae-task-loop',
-  'ae-help'
+  'ae-help',
+  'ae-gate',
+  'ae-recovery',
+  'ae-review-contract'
 )
 
 $expectedSkillNames = @{
@@ -23,6 +26,9 @@ $expectedSkillNames = @{
   'ae-refactor' = 'ae:refactor'
   'ae-task-loop' = 'ae:task-loop'
   'ae-help' = 'ae:help'
+  'ae-gate' = 'ae:gate'
+  'ae-recovery' = 'ae:recovery'
+  'ae-review-contract' = 'ae:review-contract'
 }
 
 $triggerSamples = @{
@@ -34,6 +40,9 @@ $triggerSamples = @{
   'ae-refactor' = @('/ae-refactor', 'ae:refactor')
   'ae-task-loop' = @('/ae-task-loop', 'ae:task-loop')
   'ae-help' = @('/ae-help', 'ae:help')
+  'ae-gate' = @('/ae-gate', 'ae:gate')
+  'ae-recovery' = @('/ae-recovery', 'ae:recovery')
+  'ae-review-contract' = @('/ae-review-contract', 'ae:review-contract')
 }
 
 $routingCases = @(
@@ -41,7 +50,10 @@ $routingCases = @(
   @{ Prompt = '/ae-plan migrate this plugin'; Skill = 'ae-plan' },
   @{ Prompt = '/ae-review review my changes'; Skill = 'ae-review' },
   @{ Prompt = '/ae-lfg build this feature end to end'; Skill = 'ae-lfg' },
-  @{ Prompt = '/ae-task-loop fix type errors until green'; Skill = 'ae-task-loop' }
+  @{ Prompt = '/ae-task-loop fix type errors until green'; Skill = 'ae-task-loop' },
+  @{ Prompt = '/ae-gate final proof'; Skill = 'ae-gate' },
+  @{ Prompt = '/ae-recovery resume AE workflow'; Skill = 'ae-recovery' },
+  @{ Prompt = '/ae-review-contract choose reviewers'; Skill = 'ae-review-contract' }
 )
 
 $results = New-Object System.Collections.Generic.List[string]
@@ -92,7 +104,7 @@ foreach ($capability in @('Interactive', 'Read', 'Write')) {
     Fail "Missing interface capability: $capability"
   }
 }
-Pass 'plugin manifest is parseable and declares the expected Codex V1 surface'
+Pass 'plugin manifest is parseable and declares the expected Codex 0.2 surface'
 
 if (-not (Test-Path -LiteralPath $skillsRoot)) {
   Fail "Missing skills directory: $skillsRoot"
@@ -157,10 +169,7 @@ foreach ($case in $routingCases) {
 Pass "representative routing eval set passed ($($routingCases.Count) cases)"
 
 $blocked = @(
-  'ae' + '-gate',
-  'ae' + '-recovery',
   'ae' + '-help tool',
-  'ae' + '-review-contract',
   '.opencode' + '/plugins',
   '.opencode' + '\plugins',
   'disable' + '-model-invocation'
@@ -182,6 +191,14 @@ foreach ($file in $scanFiles) {
 }
 Pass 'compatibility scan found no blocked opencode-only tool or plugin leftovers'
 
+foreach ($script in @('ae-gate.ps1', 'ae-recovery.ps1', 'ae-review-contract.ps1', 'test-core-tools.ps1')) {
+  $scriptPath = Join-Path $root "scripts\$script"
+  if (-not (Test-Path -LiteralPath $scriptPath)) {
+    Fail "Missing core script: $scriptPath"
+  }
+}
+Pass 'core gate, recovery, and review-contract scripts are present'
+
 $readmePath = Join-Path $root 'README.md'
 if (-not (Test-Path -LiteralPath $readmePath)) {
   Fail "Missing README: $readmePath"
@@ -189,7 +206,8 @@ if (-not (Test-Path -LiteralPath $readmePath)) {
 $readme = Get-Content -Raw -LiteralPath $readmePath
 foreach ($needle in @(
   'skill-first plugin',
-  'V1 Boundaries',
+  'V2 Core Closure',
+  'V2 Boundaries',
   'does not update global Codex marketplace configuration automatically',
   'Swagger parsing',
   'Figma export',

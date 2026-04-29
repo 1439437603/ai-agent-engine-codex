@@ -1,6 +1,6 @@
 # AI Agent Engine for Codex 中文说明
 
-这是 AI Agent Engine 的 Codex 原生 V1 迁移版本。它采用“技能包优先”的方式，把 AE 的核心工程工作流迁移为 Codex 可发现、可触发、可执行的 skills。
+这是 AI Agent Engine 的 Codex 原生迁移版本。它采用“技能包优先”的方式，把 AE 的核心工程工作流迁移为 Codex 可发现、可触发、可执行的 skills，并补充脚本化门禁、恢复和审查契约能力。
 
 V1 的目标不是完整复刻 opencode 插件运行时，而是先提供稳定、可维护、可验证的 Codex 工作流能力。
 
@@ -21,7 +21,10 @@ V1 的目标不是完整复刻 opencode 插件运行时，而是先提供稳定�
 | `ae:review` | `/ae-review` | 审查代码、文档或当前变更 |
 | `ae:refactor` | `/ae-refactor` | 行为保持型重构和技术债治理 |
 | `ae:task-loop` | `/ae-task-loop` | 循环修复直到验证通过或遇到真实阻塞 |
-| `ae:help` | `/ae-help` | 查看 V1 技能包帮助 |
+| `ae:help` | `/ae-help` | 查看当前技能包帮助 |
+| `ae:gate` | `/ae-gate` | 运行脚本化阶段门禁和交付证明 |
+| `ae:recovery` | `/ae-recovery` | 从已有产物推断下一步 AE 技能 |
+| `ae:review-contract` | `/ae-review-contract` | 生成审查角色和门控规则 |
 
 说明：`/ae-*` 在 V1 中是触发文本，不是 Codex 原生命令。
 
@@ -34,12 +37,19 @@ ai-agent-engine-codex/
   assets/
     .gitkeep
   scripts/
+    ae-gate.ps1
+    ae-recovery.ps1
+    ae-review-contract.ps1
+    test-core-tools.ps1
     validate-plugin.ps1
   skills/
     ae-brainstorm/
     ae-help/
     ae-lfg/
     ae-plan/
+    ae-gate/
+    ae-recovery/
+    ae-review-contract/
     ae-refactor/
     ae-review/
     ae-task-loop/
@@ -66,14 +76,25 @@ powershell -ExecutionPolicy Bypass -File .\scripts\validate-plugin.ps1
 - 是否残留 opencode-only 的强依赖。
 - README 是否说明激活边界和后续延期能力。
 
-## V1 边界
+核心闭环脚本可单独验证：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\test-core-tools.ps1
+```
+
+## 已迁移的核心工具替代能力
+
+- `ae-gate.ps1`：返回 pass/block 门禁结果，final 阶段可写入 `docs/ae/gates/` 证明文件。
+- `ae-recovery.ps1`：扫描 `docs/ae/brainstorms/`、`docs/ae/plans/` 和 `docs/ae/gates/`，推荐下一步 skill。
+- `ae-review-contract.ps1`：根据审查类型和风险开关返回审查角色和门控规则。
+
+## V2 边界
 
 本版本暂不迁移以下能力：
 
 - opencode TypeScript plugin server
 - opencode TUI
 - 原生 `/ae-*` 命令注册系统
-- `ae-gate`、`ae-recovery`、`ae-review-contract` 等自定义工具
 - Swagger/OpenAPI 解析
 - Figma 素材导出
 - SQL 执行

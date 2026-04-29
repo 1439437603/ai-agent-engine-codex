@@ -21,10 +21,11 @@ If no reviewable artifact exists, explain the missing scope and suggest the smal
 
 1. Read relevant instructions and the target artifact.
 2. Understand intended behavior before judging implementation.
-3. Check edge cases, failure modes, tests, compatibility, and user-visible behavior.
-4. Report findings first, ordered by severity.
-5. Include precise file and line references when reviewing code.
-6. If no findings are discovered, say so and list residual risks or untested areas.
+3. Use `ae:review-contract` when the review scope has security, API, performance, migration, tooling, UI, or architecture risk.
+4. Check edge cases, failure modes, tests, compatibility, and user-visible behavior.
+5. Report findings first, ordered by severity.
+6. Include precise file and line references when reviewing code.
+7. If no findings are discovered, say so and list residual risks or untested areas.
 
 ## Output Format
 

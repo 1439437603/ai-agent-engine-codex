@@ -16,8 +16,9 @@ Use this skill to implement a scoped task or an existing plan. It is action-orie
 5. Before edits, identify the exact files or directories to change.
 6. Make the smallest viable implementation.
 7. Run the verification defined by the plan; if none exists, choose the minimum useful checks.
-8. If verification fails, classify the failure and continue iterating while a recovery path exists.
-9. Final response must include target, result, evidence, risks, and highest-ROI next step.
+8. Run `ae:gate` at `final` for substantial delivery, passing the plan path, validation command, and review status when available.
+9. If verification fails, classify the failure and continue iterating while a recovery path exists.
+10. Final response must include target, result, evidence, risks, and highest-ROI next step.
 
 ## Verification Defaults
 

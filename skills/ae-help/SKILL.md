@@ -19,10 +19,14 @@ Use this skill to explain the V1 Codex skill pack. Do not scan the source reposi
 | `ae:refactor` | `/ae-refactor` | Plan behavior-preserving cleanup or technical debt work |
 | `ae:task-loop` | `/ae-task-loop` | Iterate on a concrete task until validation passes |
 | `ae:help` | `/ae-help` | Show this help |
+| `ae:gate` | `/ae-gate` | Run script-backed workflow evidence gates |
+| `ae:recovery` | `/ae-recovery` | Recover workflow state from existing artifacts |
+| `ae:review-contract` | `/ae-review-contract` | Generate reviewer selection and gate rules |
 
 ## V1 Boundaries
 
 - V1 provides Codex skills only, not native slash commands.
+- Core gate, recovery, and review-contract checks are available as script-backed Codex skills.
 - Specialized tools for Swagger, Figma, SQL, browser automation, dynamic catalogs, and cross-session transfer are not included yet.
 - When a workflow needs proof, use Codex-visible evidence: file checks, git status, lint/typecheck/test output, screenshots when available, and final evidence summaries.
 
@@ -32,3 +36,5 @@ Use this skill to explain the V1 Codex skill pack. Do not scan the source reposi
 - For unclear requirements: use `ae:brainstorm`.
 - For an already scoped task: use `ae:plan`, then `ae:work`.
 - For quality checks: use `ae:review`.
+- For delivery proof: use `ae:gate`.
+- For resuming work: use `ae:recovery`.

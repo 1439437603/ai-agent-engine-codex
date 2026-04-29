@@ -17,6 +17,7 @@ Use this as the main pipeline for feature work, bug fixes, migrations, or multi-
    - Review-only request: use `ae:review`.
 
 2. **Clarify requirements**
+   - If prior artifacts might exist, run `ae:recovery` first and follow its `recommendedNextSkill`.
    - Inspect local context first.
    - Capture goal, scope, constraints, success criteria, and minimum verification.
    - Create a requirements document for substantial work.
@@ -26,11 +27,13 @@ Use this as the main pipeline for feature work, bug fixes, migrations, or multi-
    - Ensure the plan includes implementation steps and verification evidence.
 
 4. **Implement**
+   - Run `ae:gate` at `before_work` for substantial plans.
    - Use `ae:work`.
    - Preserve unrelated changes.
    - Make the smallest viable change.
 
 5. **Review**
+   - Use `ae:review-contract` when reviewer perspectives or gate rules are unclear.
    - Use `ae:review` on changed code, plan artifacts, or documents.
    - Fix blocking findings before delivery.
 
@@ -40,6 +43,7 @@ Use this as the main pipeline for feature work, bug fixes, migrations, or multi-
    - If checks fail, use `ae:task-loop` until pass or blocker.
 
 7. **Deliver**
+   - Run `ae:gate` at `final` when there is a plan, validation command, or review status to prove.
    - Summarize target, changes, verification, result, risks, and best next step.
 
 ## Evidence Gate
