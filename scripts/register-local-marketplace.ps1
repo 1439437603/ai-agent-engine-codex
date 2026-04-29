@@ -1,12 +1,29 @@
 param(
   [string]$PluginRoot = (Split-Path -Parent $PSScriptRoot),
-  [string]$MarketplacePath = (Join-Path $env:USERPROFILE '.agents\plugins\marketplace.json')
+  [string]$MarketplaceRoot = (Join-Path $env:USERPROFILE '.codex\local-marketplaces\ae-codex'),
+  [string]$MarketplacePath,
+  [string]$CacheRoot = (Join-Path $env:USERPROFILE '.codex\plugins\cache')
 )
 
 $ErrorActionPreference = 'Stop'
 
-function Normalize-PathForJson($path) {
-  return ($path -replace '\\', '/')
+function Get-FullPath($path) {
+  return [System.IO.Path]::GetFullPath($path)
+}
+
+function Assert-ChildPath($childPath, $parentPath) {
+  $childFull = (Get-FullPath $childPath)
+  $parentFull = (Get-FullPath $parentPath).TrimEnd([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar)
+  $comparison = [System.StringComparison]::OrdinalIgnoreCase
+  if (-not $childFull.StartsWith($parentFull + [System.IO.Path]::DirectorySeparatorChar, $comparison)) {
+    throw "Refusing to modify path outside expected root. Path: $childFull Root: $parentFull"
+  }
+}
+
+function Write-JsonFile($path, $value) {
+  $json = $value | ConvertTo-Json -Depth 10
+  $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+  [System.IO.File]::WriteAllText($path, $json, $utf8NoBom)
 }
 
 $pluginRootPath = (Resolve-Path -LiteralPath $PluginRoot).Path
@@ -16,8 +33,21 @@ if (-not (Test-Path -LiteralPath $manifestPath)) {
 }
 
 $manifest = Get-Content -Raw -LiteralPath $manifestPath | ConvertFrom-Json
+if ([string]::IsNullOrWhiteSpace($MarketplacePath)) {
+  $MarketplacePath = Join-Path $MarketplaceRoot '.agents\plugins\marketplace.json'
+} elseif (-not $PSBoundParameters.ContainsKey('MarketplaceRoot')) {
+  $marketplaceFile = Get-FullPath $MarketplacePath
+  $pluginsDir = Split-Path -Parent $marketplaceFile
+  $agentsDir = Split-Path -Parent $pluginsDir
+  if ((Split-Path -Leaf $pluginsDir) -eq 'plugins' -and (Split-Path -Leaf $agentsDir) -eq '.agents') {
+    $MarketplaceRoot = Split-Path -Parent $agentsDir
+  } else {
+    $MarketplaceRoot = Split-Path -Parent $marketplaceFile
+  }
+}
 $marketplaceDir = Split-Path -Parent $MarketplacePath
 New-Item -ItemType Directory -Force -Path $marketplaceDir | Out-Null
+New-Item -ItemType Directory -Force -Path (Join-Path $MarketplaceRoot 'plugins') | Out-Null
 
 $backupPath = $null
 if (Test-Path -LiteralPath $MarketplacePath) {
@@ -37,7 +67,7 @@ $entry = [pscustomobject]@{
   name = $manifest.name
   source = [pscustomobject]@{
     source = 'local'
-    path = Normalize-PathForJson $pluginRootPath
+    path = "./plugins/$($manifest.name)"
   }
   policy = [pscustomobject]@{
     installation = 'AVAILABLE'
@@ -46,12 +76,35 @@ $entry = [pscustomobject]@{
   category = 'Coding'
 }
 $marketplace.plugins = @($plugins + $entry)
-$marketplace | ConvertTo-Json -Depth 10 | Set-Content -Encoding UTF8 -LiteralPath $MarketplacePath
+Write-JsonFile $MarketplacePath $marketplace
+
+$marketplacePluginPath = Join-Path $MarketplaceRoot "plugins\$($manifest.name)"
+Assert-ChildPath $marketplacePluginPath $MarketplaceRoot
+if (Test-Path -LiteralPath $marketplacePluginPath) {
+  Remove-Item -LiteralPath $marketplacePluginPath -Recurse -Force
+}
+Copy-Item -LiteralPath $pluginRootPath -Destination $marketplacePluginPath -Recurse -Force
+Remove-Item -LiteralPath (Join-Path $marketplacePluginPath '.git') -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item -LiteralPath (Join-Path $marketplacePluginPath '.omx') -Recurse -Force -ErrorAction SilentlyContinue
+
+$cachePluginPath = Join-Path $CacheRoot "ae-local\$($manifest.name)\$($manifest.version)"
+Assert-ChildPath $cachePluginPath $CacheRoot
+if (Test-Path -LiteralPath $cachePluginPath) {
+  Remove-Item -LiteralPath $cachePluginPath -Recurse -Force
+}
+New-Item -ItemType Directory -Force -Path (Split-Path -Parent $cachePluginPath) | Out-Null
+Copy-Item -LiteralPath $pluginRootPath -Destination $cachePluginPath -Recurse -Force
+Remove-Item -LiteralPath (Join-Path $cachePluginPath '.git') -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item -LiteralPath (Join-Path $cachePluginPath '.omx') -Recurse -Force -ErrorAction SilentlyContinue
 
 [ordered]@{
   status = 'registered'
   pluginName = $manifest.name
+  version = $manifest.version
   marketplacePath = $MarketplacePath
+  marketplaceRoot = $MarketplaceRoot
   backupPath = $backupPath
   pluginPath = $pluginRootPath
+  marketplacePluginPath = $marketplacePluginPath
+  cachePluginPath = $cachePluginPath
 } | ConvertTo-Json -Depth 5

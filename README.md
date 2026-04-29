@@ -40,7 +40,19 @@ Use this directory as a local Codex plugin source. The plugin manifest is:
 D:\yanjiu\ai-agent-engine-codex\.codex-plugin\plugin.json
 ```
 
-This project does not update global Codex marketplace configuration automatically. If you want UI installation later, add this plugin directory to your local marketplace by hand or ask for that as a separate step.
+This project does not update global Codex marketplace configuration automatically. To make local installation repeatable, use the reversible local marketplace helper instead of editing Codex state by hand:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\register-local-marketplace.ps1
+```
+
+The helper writes a local marketplace under `%USERPROFILE%\.codex\local-marketplaces\ae-codex`, copies a clean plugin snapshot into that marketplace, and mirrors the same version into `%USERPROFILE%\.codex\plugins\cache\ae-local\ai-agent-engine-codex\`.
+
+To remove those local registration artifacts:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\unregister-local-marketplace.ps1
+```
 
 ## Verification
 
@@ -60,7 +72,7 @@ The current migration adds script-backed replacements for important opencode cus
 - `scripts/ae-recovery.ps1` scans `docs/ae/brainstorms/`, `docs/ae/plans/`, and `docs/ae/gates/` to recommend the next AE skill.
 - `scripts/ae-review-contract.ps1` returns reviewer perspectives and gate rules for code or document review.
 - `scripts/ae-swagger-parser.ps1` summarizes local Swagger/OpenAPI JSON and is tested against golden fixtures.
-- `scripts/register-local-marketplace.ps1` and `scripts/unregister-local-marketplace.ps1` provide reversible local marketplace registration.
+- `scripts/register-local-marketplace.ps1` and `scripts/unregister-local-marketplace.ps1` provide reversible local marketplace registration, marketplace plugin snapshots, and local cache cleanup.
 - SQL, Figma, browser, and frontend capabilities are represented with safe skill boundaries rather than credentialed remote execution.
 
 Run the focused core-tool test suite with:

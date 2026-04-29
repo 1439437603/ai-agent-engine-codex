@@ -93,6 +93,22 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\test-core-tools.ps
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\test-migration-surface.ps1
 ```
 
+## 本机登记与回滚
+
+本项目不会自动修改全局 Codex marketplace 配置。需要本机安装测试时，优先使用可回滚脚本，而不是手工编辑 Codex 状态：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\register-local-marketplace.ps1
+```
+
+该脚本会在 `%USERPROFILE%\.codex\local-marketplaces\ae-codex` 下生成本地 marketplace，将干净插件快照复制到 marketplace 的 `plugins/` 目录，并把相同版本同步到 `%USERPROFILE%\.codex\plugins\cache\ae-local\ai-agent-engine-codex\`。
+
+需要撤销本机登记时运行：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\unregister-local-marketplace.ps1
+```
+
 ## 已迁移的核心工具替代能力
 
 - `ae-gate.ps1`：返回 pass/block 门禁结果，final 阶段可写入 `docs/ae/gates/` 证明文件。
@@ -125,17 +141,6 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\test-migration-sur
 
 ## 推荐下一步
 
-1. 将该目录登记到本机 Codex marketplace。
-2. 新开 Codex 会话测试 `/ae-help`、`/ae-plan`、`/ae-review`、`/ae-lfg`。
-3. 根据真实触发效果，决定优先迁移动态帮助、门禁验证，还是 Swagger/Figma/SQL 等专项能力。
-    ae-swagger-parser.ps1
-    ae-prompt-optimize.ps1
-    ae-help-catalog.ps1
-    ae-save-rules.ps1
-    ae-handoff.ps1
-    ae-reviewer-catalog.ps1
-    ae-sql.ps1
-    ae-figma-assets.ps1
-    register-local-marketplace.ps1
-    unregister-local-marketplace.ps1
-    test-migration-surface.ps1
+1. 新开 Codex 会话测试 `/ae-help`、`/ae-plan`、`/ae-review`、`/ae-lfg`。
+2. 根据真实触发效果，决定是否继续迁移 MCP、真实 Figma/SQL/browser 执行，或保持当前安全 wrapper 边界。
+3. 若要推进 V2，先为凭证、权限、取消和审计日志定义独立验证标准。

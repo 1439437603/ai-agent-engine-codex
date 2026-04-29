@@ -49,16 +49,42 @@ function Normalize-Text($text) {
 $workspace = Join-Path ([System.IO.Path]::GetTempPath()) ("ae-codex-migration-" + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Force -Path $workspace | Out-Null
 
-$marketplace = Join-Path $workspace 'marketplace.json'
-$register = Run-JsonScript 'register-local-marketplace.ps1' @('-PluginRoot', $root, '-MarketplacePath', $marketplace)
+$marketplaceRoot = Join-Path $workspace 'marketplace-root'
+$cacheRoot = Join-Path $workspace 'cache'
+$marketplace = Join-Path $marketplaceRoot '.agents\plugins\marketplace.json'
+$register = Run-JsonScript 'register-local-marketplace.ps1' @('-PluginRoot', $root, '-MarketplaceRoot', $marketplaceRoot, '-CacheRoot', $cacheRoot)
 if ($register.status -ne 'registered') { Fail "Marketplace register failed: $($register.status)" }
 $marketplaceJson = Get-Content -Raw -LiteralPath $marketplace | ConvertFrom-Json
 if (@($marketplaceJson.plugins).Count -ne 1 -or $marketplaceJson.plugins[0].name -ne 'ai-agent-engine-codex') {
   Fail 'Marketplace entry was not created correctly.'
 }
-$unregister = Run-JsonScript 'unregister-local-marketplace.ps1' @('-PluginName', 'ai-agent-engine-codex', '-MarketplacePath', $marketplace)
+if ($marketplaceJson.plugins[0].source.path -ne './plugins/ai-agent-engine-codex') {
+  Fail "Marketplace entry points at unexpected plugin path: $($marketplaceJson.plugins[0].source.path)"
+}
+Assert-File (Join-Path $marketplaceRoot 'plugins\ai-agent-engine-codex\.codex-plugin\plugin.json')
+Assert-File (Join-Path $cacheRoot 'ae-local\ai-agent-engine-codex\0.3.0\.codex-plugin\plugin.json')
+$unregister = Run-JsonScript 'unregister-local-marketplace.ps1' @('-PluginName', 'ai-agent-engine-codex', '-MarketplaceRoot', $marketplaceRoot, '-CacheRoot', $cacheRoot)
 if ($unregister.status -ne 'unregistered') { Fail "Marketplace unregister failed: $($unregister.status)" }
-Pass 'marketplace register/unregister creates backups and updates entries'
+if (Test-Path -LiteralPath (Join-Path $marketplaceRoot 'plugins\ai-agent-engine-codex')) {
+  Fail 'Marketplace unregister did not remove marketplace plugin copy.'
+}
+if (Test-Path -LiteralPath (Join-Path $cacheRoot 'ae-local\ai-agent-engine-codex')) {
+  Fail 'Marketplace unregister did not remove cache plugin path.'
+}
+
+$pathOnlyRoot = Join-Path $workspace 'path-only-root'
+$pathOnlyMarketplace = Join-Path $pathOnlyRoot 'marketplace.json'
+$pathOnlyRegister = Run-JsonScript 'register-local-marketplace.ps1' @('-PluginRoot', $root, '-MarketplacePath', $pathOnlyMarketplace, '-CacheRoot', $cacheRoot)
+if ($pathOnlyRegister.marketplaceRoot -ne $pathOnlyRoot) {
+  Fail "MarketplacePath-only registration inferred unexpected root: $($pathOnlyRegister.marketplaceRoot)"
+}
+Assert-File (Join-Path $pathOnlyRoot 'plugins\ai-agent-engine-codex\.codex-plugin\plugin.json')
+$pathOnlyUnregister = Run-JsonScript 'unregister-local-marketplace.ps1' @('-PluginName', 'ai-agent-engine-codex', '-MarketplacePath', $pathOnlyMarketplace, '-CacheRoot', $cacheRoot)
+if ($pathOnlyUnregister.status -ne 'unregistered') { Fail "MarketplacePath-only unregister failed: $($pathOnlyUnregister.status)" }
+if (Test-Path -LiteralPath (Join-Path $pathOnlyRoot 'plugins\ai-agent-engine-codex')) {
+  Fail 'MarketplacePath-only unregister did not remove inferred-root plugin copy.'
+}
+Pass 'marketplace register/unregister creates supported root, path-only root, and cache entries'
 
 $overview = Run-TextScript 'ae-swagger-parser.ps1' @(
   '-Source', (Join-Path $fixturesRoot 'swagger\openapi-3-basic.json'),
